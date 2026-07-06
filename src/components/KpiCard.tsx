@@ -4,6 +4,7 @@ interface KpiCardProps {
   unit?: string;
 }
 
+/** A single KPI tile showing a numeric value with an optional (decorative) unit. */
 export function KpiCard({ label, value, unit }: KpiCardProps) {
   return (
     <div className="card kpi">

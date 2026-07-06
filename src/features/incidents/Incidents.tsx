@@ -15,7 +15,7 @@ export function Incidents() {
   const [zoneId, setZoneId] = useState(ZONES[0]?.id ?? '');
   const [description, setDescription] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState('');
+  const [announcement, setAnnouncement] = useState('');
 
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -35,7 +35,7 @@ export function Incidents() {
     };
     setIncidents((prev) => [incident, ...prev]);
     setDescription('');
-    setStatus(`${INCIDENT_LABELS[type]} incident logged and added to the list.`);
+    setAnnouncement(`${INCIDENT_LABELS[type]} incident logged and added to the list.`);
   };
 
   return (
@@ -88,7 +88,7 @@ export function Incidents() {
           Log incident
         </button>
         <p className="live-region" role="status">
-          {status}
+          {announcement}
         </p>
       </form>
 

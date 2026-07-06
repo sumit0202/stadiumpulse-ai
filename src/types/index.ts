@@ -40,6 +40,12 @@ export type ApiName =
 
 export type ApiMode = 'demo' | 'ready' | 'live' | 'error';
 
+/**
+ * The full set of semantic tones a {@link StatusChip} can render. Kept as a
+ * union (not `string`) so every chip is type-checked against a real domain state.
+ */
+export type ChipTone = CrowdLevel | RiskLevel | ApiMode;
+
 export interface LatLng {
   lat: number;
   lng: number;

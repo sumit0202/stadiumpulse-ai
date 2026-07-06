@@ -1,5 +1,7 @@
+import type { ChipTone } from '../types';
+
 interface StatusChipProps {
-  tone: string;
+  tone: ChipTone;
   label: string;
 }
 

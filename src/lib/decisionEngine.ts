@@ -54,17 +54,28 @@ const CROWD_TO_RISK: Record<CrowdLevel, RiskLevel> = {
 export const crowdLevelToRisk = (level: CrowdLevel): RiskLevel => CROWD_TO_RISK[level];
 
 /** Predict the density and level ~N minutes ahead using the current trend. */
+type CongestionDirection = 'rising' | 'falling' | 'steady';
+
+function trendDirection(trend: number): CongestionDirection {
+  if (trend > 0) return 'rising';
+  if (trend < 0) return 'falling';
+  return 'steady';
+}
+
 export function predictCongestion(
   zone: CrowdZone,
   minutes = 15,
 ): {
   projectedDensity: number;
   projectedLevel: CrowdLevel;
-  direction: 'rising' | 'falling' | 'steady';
+  direction: CongestionDirection;
 } {
   const projectedDensity = Math.round(clamp(zone.density + (zone.trend * minutes) / 5, 0, 100));
-  const direction = zone.trend > 0 ? 'rising' : zone.trend < 0 ? 'falling' : 'steady';
-  return { projectedDensity, projectedLevel: classifyCrowd(projectedDensity), direction };
+  return {
+    projectedDensity,
+    projectedLevel: classifyCrowd(projectedDensity),
+    direction: trendDirection(zone.trend),
+  };
 }
 
 /* ------------------------------ KPI computation ----------------------------- */
@@ -314,6 +325,15 @@ const MODE_SPEED_FACTOR: Record<RouteMode, number> = {
   'staff-only': 0.85,
 };
 
+/** Wayfinding guidance for the middle step of a planned route, keyed by mode. */
+const ROUTE_STEP_GUIDANCE: Record<RouteMode, string> = {
+  fastest: 'Follow the main concourse signage.',
+  family: 'Follow the main concourse signage.',
+  'low-crowd': 'Follow the quieter perimeter concourse.',
+  accessible: 'Use step-free ramps and lifts where marked.',
+  'staff-only': 'Use the operational service corridor (staff credentials required).',
+};
+
 /**
  * Deterministic route planner used as the mock/fallback for the Routes API.
  * Base walking speed is ~80 m/min, adjusted by route mode.
@@ -328,8 +348,8 @@ export function planRoute(
   const to = findNode(venue, toId);
   if (!from || !to) return null;
 
-  const distanceMetersValue = distanceMeters(from.location, to.location);
-  const baseMinutes = distanceMetersValue / 80;
+  const distanceInMeters = distanceMeters(from.location, to.location);
+  const baseMinutes = distanceInMeters / 80;
   const etaMinutes = Math.max(1, Math.round(baseMinutes * MODE_SPEED_FACTOR[mode]));
   const avgCrowd = (from.crowd + to.crowd) / 2;
   const crowdRisk = crowdLevelToRisk(classifyCrowd(avgCrowd));
@@ -340,23 +360,13 @@ export function planRoute(
   if (mode === 'family') accessibilityScore = Math.min(100, accessibilityScore + 5);
   accessibilityScore = clamp(accessibilityScore - Math.round(avgCrowd / 10), 0, 100);
 
-  const steps = [
-    `Start at ${from.name}.`,
-    mode === 'low-crowd'
-      ? 'Follow the quieter perimeter concourse.'
-      : mode === 'accessible'
-        ? 'Use step-free ramps and lifts where marked.'
-        : mode === 'staff-only'
-          ? 'Use the operational service corridor (staff credentials required).'
-          : 'Follow the main concourse signage.',
-    `Arrive at ${to.name}.`,
-  ];
+  const steps = [`Start at ${from.name}.`, ROUTE_STEP_GUIDANCE[mode], `Arrive at ${to.name}.`];
 
   return {
     mode,
     fromId,
     toId,
-    distanceMeters: distanceMetersValue,
+    distanceMeters: distanceInMeters,
     etaMinutes,
     crowdRisk,
     accessibilityScore,
