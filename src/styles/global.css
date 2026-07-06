@@ -392,6 +392,18 @@ legend {
   border: 1px solid var(--glass-border);
 }
 
+/* Right-to-left language support (e.g. Arabic): mirror directional layout. */
+[dir='rtl'] .risk {
+  border-left: none;
+  border-right: 4px solid var(--risk-low);
+  padding-left: 0;
+  padding-right: 10px;
+}
+[dir='rtl'] .chat-log {
+  padding-right: 0;
+  padding-left: 6px;
+}
+
 .heat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

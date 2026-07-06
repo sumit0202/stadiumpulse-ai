@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
+import { RTL_LANGUAGES } from '../lib/constants';
 import { validatePreferences } from '../lib/validators';
-import type { UserPreferences } from '../types';
+import type { LanguageCode, UserPreferences } from '../types';
 
 export interface A11ySettings {
   contrast: 'normal' | 'high';
@@ -57,6 +58,15 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     document.body.dataset.motion = a11y.motion;
     window.localStorage.setItem(A11Y_KEY, JSON.stringify(a11y));
   }, [a11y]);
+
+  // Reflect the active language on the document so assistive technology reads the
+  // correct language and right-to-left scripts (e.g. Arabic) render as RTL.
+  useEffect(() => {
+    const language: LanguageCode = preferences?.language ?? 'en';
+    const root = document.documentElement;
+    root.lang = language;
+    root.dir = RTL_LANGUAGES.includes(language) ? 'rtl' : 'ltr';
+  }, [preferences?.language]);
 
   const savePreferences = useCallback((prefs: UserPreferences) => {
     setPreferences(prefs);
