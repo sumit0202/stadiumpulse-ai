@@ -138,7 +138,7 @@ Copy `.env.example` → `.env` (never commit `.env`). All are optional; absence 
 | Variable                                  | Scope    | Purpose                                                                |
 | ----------------------------------------- | -------- | ---------------------------------------------------------------------- |
 | `GEMINI_API_KEY`                          | Backend  | Enables live Gemini                                                    |
-| `GEMINI_MODEL`                            | Backend  | Gemini model (default `gemini-1.5-flash`)                              |
+| `GEMINI_MODEL`                            | Backend  | Gemini model (default `gemini-2.0-flash`)                              |
 | `GOOGLE_SERVER_API_KEY`                   | Backend  | Server key for Places/Routes/Geocoding/Translation/TimeZone/AirQuality |
 | `PORT`                                    | Backend  | Proxy port (default 8787)                                              |
 | `CORS_ORIGIN`                             | Backend  | Allowed origin (default `http://localhost:5173`)                       |
@@ -159,8 +159,9 @@ scoring, crowd recommendations, accessibility components, backend assistant endp
 API status, form validation, error states, keyboard interaction, and malicious/empty/oversized/
 unsupported-language inputs, plus positive/negative/null/undefined and boundary cases, backend
 security integration (rate limit 429, Helmet CSP, strict CORS, oversized-body rejection) and
-keyboard/skip-link/toggle accessibility tests. **188 tests; 100% coverage** on the enforced layers
-(`src/lib`, `src/data`, `server/{geminiProxy,security,validators}`).
+keyboard/skip-link/toggle accessibility tests. **190 tests; 100% coverage** on the enforced layers
+(`src/lib`, `src/data`, `server/{geminiProxy,security,validators}`). Every push and PR runs the full
+suite (lint, format, type-check, coverage, build, size guard, dependency audit) in GitHub Actions CI.
 
 ## 13. Security practices
 
@@ -176,9 +177,13 @@ keyboard/skip-link/toggle accessibility tests. **188 tests; 100% coverage** on t
 
 ## 14. Accessibility practices
 
-- Semantic HTML with landmarks (`header`, `nav`, `main`, `section`), skip-to-content link,
+- Semantic HTML with landmarks (`header`, `main`, `section`, `footer`), skip-to-content link,
   `tabIndex` main target.
-- ARIA labels, `role="alert"`/`role="status"` live regions for alerts and results.
+- Primary views use the **WAI-ARIA tabs pattern** (`tablist`/`tab`/`tabpanel`) with **roving
+  tabindex** and Arrow/Home/End key navigation.
+- ARIA labels, `role="alert"`/`role="status"`/`role="log"` live regions for alerts and results.
+- Multilingual assistant replies carry a `lang` attribute so screen readers pronounce them
+  correctly.
 - Full keyboard operability and visible focus states (`:focus-visible`).
 - **High-contrast**, **large-text** and **reduced-motion** toggles (persisted), plus
   `prefers-reduced-motion` support.
@@ -205,16 +210,18 @@ keyboard/skip-link/toggle accessibility tests. **188 tests; 100% coverage** on t
 ## 17. Challenge scoring alignment
 
 - **Code Quality** — TypeScript strict mode, ESLint (incl. `jsx-a11y`), Prettier, small pure
-  modules, typed adapter layer, zero `any`, clean separation of concerns.
+  modules, typed adapter layer, zero `any`, clean separation of concerns, and GitHub Actions CI
+  gating lint/format/type-check/coverage/build/size/audit.
 - **Security** — backend-only secrets, Helmet + CSP, strict CORS, rate limiting, validation +
   sanitisation everywhere, prompt-injection guard, no PII, no `dangerouslySetInnerHTML`.
 - **Efficiency** — lazy loading, debounce/AbortController, TTL cache, memoized pure logic, tiny
   bundle, repo-size guard.
-- **Testing** — 188 real tests, **100%** branches/functions/lines/statements on core layers,
+- **Testing** — 190 real tests, **100%** branches/functions/lines/statements on core layers,
   including positive/negative/null/undefined/boundary cases, backend security integration
-  (Supertest) and accessibility (axe).
-- **Accessibility** — semantic landmarks, ARIA, keyboard support, contrast/motion/text toggles,
-  no colour-only cues, axe tests.
+  (Supertest) and accessibility (axe); enforced in CI on every push/PR.
+- **Accessibility** — semantic landmarks, WAI-ARIA tabs (roving tabindex + arrow keys), ARIA,
+  keyboard support, contrast/motion/text toggles, no colour-only cues, `lang`-tagged multilingual
+  replies, axe tests.
 
 ## 18. Repository rules
 
@@ -223,6 +230,28 @@ keyboard/skip-link/toggle accessibility tests. **188 tests; 100% coverage** on t
 - **No secrets committed** — strict `.gitignore` blocks `.env`, `node_modules`, `dist`, `coverage`
   and binary/media assets.
 - No official FIFA branding or copyrighted assets — inline SVG, CSS gradients and mock data only.
+
+## Deployment (Docker / Google Cloud Run)
+
+The repo ships a `Dockerfile` that builds the SPA and serves it from the same Express
+process that exposes `/api`, so the whole app runs as a **single container / single service**.
+
+```bash
+# build & run locally
+docker build -t stadiumpulse-ai .
+docker run -p 8080:8080 -e PORT=8080 stadiumpulse-ai
+
+# deploy to Google Cloud Run (demo mode; add keys to go live)
+gcloud run deploy stadiumpulse-ai --source . --region <region> --allow-unauthenticated
+
+# live mode: attach the Gemini key (server-side env only)
+gcloud run deploy stadiumpulse-ai --source . --region <region> --allow-unauthenticated \
+  --update-env-vars GEMINI_API_KEY=<key>,GEMINI_MODEL=gemini-2.0-flash
+```
+
+Cloud Run sets `PORT` automatically; the server reads it. The Gemini key stays in the
+service's environment and is never exposed to the browser. Without a key the service runs
+fully in demo mode.
 
 ## Package scripts
 

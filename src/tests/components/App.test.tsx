@@ -21,29 +21,35 @@ describe('App', () => {
     expect(screen.getByText(/Set up your StadiumPulse copilot/i)).toBeInTheDocument();
   });
 
-  it('renders the primary navigation once onboarded', () => {
+  it('renders the primary tablist once onboarded', () => {
     renderWithPreferences(<App />, samplePreferences);
-    expect(screen.getByRole('navigation', { name: /primary/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Dashboard' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    );
+    expect(screen.getByRole('tablist', { name: /primary/i })).toBeInTheDocument();
+    const dashboard = screen.getByRole('tab', { name: 'Dashboard' });
+    expect(dashboard).toHaveAttribute('aria-selected', 'true');
+    expect(dashboard).toHaveAttribute('tabindex', '0');
   });
 
-  it('switches tabs with the keyboard', async () => {
+  it('moves between tabs with arrow keys (roving tabindex)', async () => {
     const user = userEvent.setup();
     renderWithPreferences(<App />, samplePreferences);
-    const transportTab = screen.getByRole('button', { name: 'Transport' });
-    transportTab.focus();
-    await user.keyboard('{Enter}');
-    expect(screen.getByRole('heading', { name: 'Transportation' })).toBeInTheDocument();
-    expect(transportTab).toHaveAttribute('aria-current', 'page');
+    screen.getByRole('tab', { name: 'Dashboard' }).focus();
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('tab', { name: 'AI Copilot' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await user.keyboard('{ArrowLeft}{ArrowLeft}');
+    expect(screen.getByRole('tab', { name: 'API status' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   });
 
   it('switches tabs with a pointer click', async () => {
     const user = userEvent.setup();
     renderWithPreferences(<App />, samplePreferences);
-    await user.click(screen.getByRole('button', { name: 'Incidents' }));
+    await user.click(screen.getByRole('tab', { name: 'Incidents' }));
     expect(screen.getByRole('heading', { name: 'Incident reporting' })).toBeInTheDocument();
+    expect(screen.getByRole('tabpanel')).toBeInTheDocument();
   });
 });

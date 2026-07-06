@@ -10,6 +10,7 @@ interface ChatMessage {
   id: number;
   role: 'user' | 'ai';
   text: string;
+  lang: string;
 }
 
 function buildCrowdSummary(): string {
@@ -39,7 +40,12 @@ export function Assistant() {
       setError(`Message blocked: ${guard.reason}`);
       return;
     }
-    const userMessage: ChatMessage = { id: Date.now(), role: 'user', text: guard.sanitized };
+    const userMessage: ChatMessage = {
+      id: Date.now(),
+      role: 'user',
+      text: guard.sanitized,
+      lang: preferences.language,
+    };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setLoading(true);
@@ -61,7 +67,10 @@ export function Assistant() {
         controller.signal,
       );
       setRecommendation(response.recommendation);
-      setMessages((prev) => [...prev, { id: Date.now() + 1, role: 'ai', text: response.reply }]);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, role: 'ai', text: response.reply, lang: response.language },
+      ]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Assistant unavailable');
     } finally {
@@ -82,7 +91,7 @@ export function Assistant() {
           <p className="muted">Ask about routes, crowds, transport, accessibility or safety.</p>
         ) : (
           messages.map((m) => (
-            <div key={m.id} className={`bubble ${m.role}`}>
+            <div key={m.id} className={`bubble ${m.role}`} lang={m.lang}>
               <span className="live-region">
                 {m.role === 'ai' ? 'Assistant said: ' : 'You said: '}
               </span>

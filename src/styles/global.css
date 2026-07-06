@@ -157,7 +157,7 @@ button {
 .nav button:hover {
   transform: translateY(-1px);
 }
-.nav button[aria-current='page'] {
+.nav button[aria-selected='true'] {
   background: linear-gradient(120deg, var(--accent), var(--accent-2));
   color: #001;
   border-color: transparent;

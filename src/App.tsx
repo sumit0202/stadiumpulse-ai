@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Header } from './components/Header';
 import { Onboarding } from './features/onboarding/Onboarding';
 import { Dashboard } from './features/dashboard/Dashboard';
@@ -62,6 +62,24 @@ function renderTab(tab: TabId) {
 export function App() {
   const { preferences } = usePreferences();
   const [tab, setTab] = useState<TabId>('dashboard');
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const onTabKeyDown = (event: React.KeyboardEvent, index: number) => {
+    const last = TABS.length - 1;
+    let next = index;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown')
+      next = index === last ? 0 : index + 1;
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp')
+      next = index === 0 ? last : index - 1;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = last;
+    else return;
+    event.preventDefault();
+    const nextTab = TABS[next];
+    if (!nextTab) return;
+    setTab(nextTab.id);
+    tabRefs.current[next]?.focus();
+  };
 
   return (
     <>
@@ -72,20 +90,33 @@ export function App() {
         <Header />
         {preferences ? (
           <>
-            <nav className="nav" aria-label="Primary">
-              {TABS.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setTab(t.id)}
-                  aria-current={tab === t.id ? 'page' : undefined}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </nav>
+            <div className="nav" role="tablist" aria-label="Primary views">
+              {TABS.map((t, index) => {
+                const selected = tab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    ref={(el) => {
+                      tabRefs.current[index] = el;
+                    }}
+                    type="button"
+                    role="tab"
+                    id={`tab-${t.id}`}
+                    aria-selected={selected}
+                    aria-controls={selected ? `panel-${t.id}` : undefined}
+                    tabIndex={selected ? 0 : -1}
+                    onClick={() => setTab(t.id)}
+                    onKeyDown={(event) => onTabKeyDown(event, index)}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
             <main id="main-content" tabIndex={-1}>
-              {renderTab(tab)}
+              <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
+                {renderTab(tab)}
+              </div>
             </main>
           </>
         ) : (

@@ -91,7 +91,7 @@ async function callGemini(
   request: AssistantRequest,
   recommendation: Recommendation,
 ): Promise<string> {
-  const model = config.model ?? 'gemini-1.5-flash';
+  const model = config.model ?? 'gemini-2.0-flash';
   const fetchImpl: FetchLike = config.fetchImpl ?? (fetch as unknown as FetchLike);
   const prompt =
     `${SYSTEM_PROMPT}\n\nRespond in language code: ${request.context.language}.\n` +
