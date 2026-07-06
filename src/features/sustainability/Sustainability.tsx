@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
 import { getVenueSustainability } from '../../lib/venueInsights';
 import { KpiCard } from '../../components/KpiCard';
-import { getVenue } from '../../data/dataSource';
+import { mockVenue } from '../../data/mockVenue';
 
 export function Sustainability() {
   const { score, breakdown, air, greenest, crowdEnergyLoad } = useMemo(getVenueSustainability, []);
 
-  const venue = getVenue();
-  const waterPoints = venue.amenities.filter((a) => a.type === 'water-refill');
-  const recyclingZones = venue.amenities.filter((a) => a.type === 'recycling');
+  const waterPoints = mockVenue.amenities.filter((a) => a.type === 'water-refill');
+  const recyclingZones = mockVenue.amenities.filter((a) => a.type === 'recycling');
 
   return (
     <section className="stack" aria-labelledby="sustainability-title">

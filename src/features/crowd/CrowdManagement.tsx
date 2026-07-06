@@ -8,29 +8,27 @@ import {
 } from '../../lib/decisionEngine';
 import { RecommendationCard } from '../../components/RecommendationCard';
 import { StatusChip } from '../../components/StatusChip';
-import { getCrowd, getVenue } from '../../data/dataSource';
+import { mockVenue } from '../../data/mockVenue';
+import { mockCrowd } from '../../data/mockCrowd';
 import type { Recommendation } from '../../types';
 
 export function CrowdManagement() {
-  const venue = getVenue();
-  const crowd = getCrowd();
-
   const predictions = useMemo(
-    () => crowd.zones.map((zone) => ({ zone, forecast: predictCongestion(zone, 15) })),
-    [crowd],
+    () => mockCrowd.zones.map((zone) => ({ zone, forecast: predictCongestion(zone, 15) })),
+    [],
   );
 
-  const bottlenecks = crowd.zones.filter((z) => z.level === 'orange' || z.level === 'red');
+  const bottlenecks = mockCrowd.zones.filter((z) => z.level === 'orange' || z.level === 'red');
 
   const recommendations = useMemo(
     () =>
       [
-        recommendOpenAlternateGate(venue),
-        recommendStaffDispatch(crowd),
-        recommendRedirectFans(crowd),
-        recommendExitGuidance(crowd),
+        recommendOpenAlternateGate(mockVenue),
+        recommendStaffDispatch(mockCrowd),
+        recommendRedirectFans(mockCrowd),
+        recommendExitGuidance(mockCrowd),
       ].filter((r): r is Recommendation => r !== null),
-    [venue, crowd],
+    [],
   );
 
   return (

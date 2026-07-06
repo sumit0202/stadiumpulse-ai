@@ -3,18 +3,19 @@ import { nextStepForIncident, severityForIncident } from '../../lib/decisionEngi
 import { validateIncidentDescription } from '../../lib/validators';
 import { INCIDENT_LABELS, INCIDENT_TYPES, RISK_LABELS } from '../../lib/constants';
 import { StatusChip } from '../../components/StatusChip';
-import { getCrowd, getIncidents } from '../../data/dataSource';
+import { mockIncidents } from '../../data/mockIncidents';
+import { mockCrowd } from '../../data/mockCrowd';
 import type { Incident, IncidentType } from '../../types';
 
-const ZONES = getCrowd().zones.map((z) => ({ id: z.id, name: z.name }));
+const ZONES = mockCrowd.zones.map((z) => ({ id: z.id, name: z.name }));
 
 export function Incidents() {
-  const [incidents, setIncidents] = useState<Incident[]>(getIncidents());
+  const [incidents, setIncidents] = useState<Incident[]>(mockIncidents);
   const [type, setType] = useState<IncidentType>('medical');
   const [zoneId, setZoneId] = useState(ZONES[0]?.id ?? '');
   const [description, setDescription] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [announcement, setAnnouncement] = useState('');
+  const [status, setStatus] = useState('');
 
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -34,7 +35,7 @@ export function Incidents() {
     };
     setIncidents((prev) => [incident, ...prev]);
     setDescription('');
-    setAnnouncement(`${INCIDENT_LABELS[type]} incident logged and added to the list.`);
+    setStatus(`${INCIDENT_LABELS[type]} incident logged and added to the list.`);
   };
 
   return (
@@ -87,7 +88,7 @@ export function Incidents() {
           Log incident
         </button>
         <p className="live-region" role="status">
-          {announcement}
+          {status}
         </p>
       </form>
 

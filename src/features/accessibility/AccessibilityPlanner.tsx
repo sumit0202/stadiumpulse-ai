@@ -2,15 +2,14 @@ import { useMemo, useState } from 'react';
 import { planRoute } from '../../lib/decisionEngine';
 import { venueNodes } from '../../lib/venueInsights';
 import { usePreferences } from '../../state/preferences';
-import { getVenue } from '../../data/dataSource';
+import { mockVenue } from '../../data/mockVenue';
 
 export function AccessibilityPlanner() {
   const { a11y, setContrast, setText, setMotion } = usePreferences();
-  const venue = getVenue();
   const [fromId, setFromId] = useState(venueNodes[0]?.id ?? '');
   const [toId, setToId] = useState('help-1');
 
-  const plan = useMemo(() => planRoute(venue, fromId, toId, 'accessible'), [venue, fromId, toId]);
+  const plan = useMemo(() => planRoute(mockVenue, fromId, toId, 'accessible'), [fromId, toId]);
 
   return (
     <section className="stack" aria-labelledby="a11y-title">

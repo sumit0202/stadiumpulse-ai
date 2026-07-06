@@ -4,13 +4,12 @@ import { ROUTE_MODES, ROUTE_MODE_LABELS, RISK_LABELS } from '../../lib/constants
 import { useDebouncedValue } from '../../lib/useDebouncedValue';
 import { venueNodes } from '../../lib/venueInsights';
 import { StatusChip } from '../../components/StatusChip';
-import { getVenue } from '../../data/dataSource';
+import { mockVenue } from '../../data/mockVenue';
 import type { RouteMode } from '../../types';
 
 const StadiumMap = lazy(() => import('./StadiumMap'));
 
 export function NavigationPlanner() {
-  const venue = getVenue();
   const [fromId, setFromId] = useState(venueNodes[0]?.id ?? '');
   const [toId, setToId] = useState(venueNodes[venueNodes.length - 1]?.id ?? '');
   const [mode, setMode] = useState<RouteMode>('accessible');
@@ -23,7 +22,7 @@ export function NavigationPlanner() {
     return venueNodes.filter((n) => n.name.toLowerCase().includes(q));
   }, [debouncedFilter]);
 
-  const plan = useMemo(() => planRoute(venue, fromId, toId, mode), [venue, fromId, toId, mode]);
+  const plan = useMemo(() => planRoute(mockVenue, fromId, toId, mode), [fromId, toId, mode]);
 
   return (
     <section className="stack" aria-labelledby="nav-title">

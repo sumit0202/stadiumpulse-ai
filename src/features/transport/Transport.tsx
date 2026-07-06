@@ -3,13 +3,12 @@ import { lowestCarbonOption } from '../../lib/sustainability';
 import { recommendExitGuidance } from '../../lib/decisionEngine';
 import { StatusChip } from '../../components/StatusChip';
 import { RecommendationCard } from '../../components/RecommendationCard';
-import { getCrowd, getTransport } from '../../data/dataSource';
+import { mockTransport } from '../../data/mockTransport';
+import { mockCrowd } from '../../data/mockCrowd';
 
 export function Transport() {
-  const transport = getTransport();
-  const crowd = getCrowd();
-  const greenest = useMemo(() => lowestCarbonOption(transport), [transport]);
-  const exitPlan = useMemo(() => recommendExitGuidance(crowd), [crowd]);
+  const greenest = useMemo(() => lowestCarbonOption(mockTransport), []);
+  const exitPlan = useMemo(() => recommendExitGuidance(mockCrowd), []);
 
   return (
     <section className="stack" aria-labelledby="transport-title">
@@ -28,7 +27,7 @@ export function Transport() {
             </tr>
           </thead>
           <tbody>
-            {transport.map((option) => (
+            {mockTransport.map((option) => (
               <tr key={option.mode}>
                 <th scope="row">
                   {option.label}
@@ -59,7 +58,7 @@ export function Transport() {
 
       <div className="card">
         <h3>Post-match exit wave planning</h3>
-        <p>Current exit wave intensity: {crowd.postMatchExitWave}%.</p>
+        <p>Current exit wave intensity: {mockCrowd.postMatchExitWave}%.</p>
         {exitPlan ? (
           <RecommendationCard recommendation={exitPlan} />
         ) : (

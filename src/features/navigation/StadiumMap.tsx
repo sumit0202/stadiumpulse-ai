@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
-import { getCrowd, getVenue } from '../../data/dataSource';
-import type { CrowdLevel } from '../../types';
+import { mockVenue } from '../../data/mockVenue';
+import { mockCrowd } from '../../data/mockCrowd';
 
 interface StadiumMapProps {
   fromId: string;
   toId: string;
 }
 
-const CROWD_COLOR: Record<CrowdLevel, string> = {
+const CROWD_COLOR: Record<string, string> = {
   green: '#22d3a6',
   yellow: '#f2c14e',
   orange: '#ff8c42',
@@ -19,12 +19,10 @@ const CROWD_COLOR: Record<CrowdLevel, string> = {
  * In live mode the Maps JavaScript API would render here using the browser key.
  */
 export default function StadiumMap({ fromId, toId }: StadiumMapProps) {
-  const venue = getVenue();
-  const crowd = getCrowd();
   const points = useMemo(() => {
     const nodes = [
-      ...venue.gates.map((g) => ({ id: g.id, name: g.name, ...g.location })),
-      ...venue.amenities.map((a) => ({ id: a.id, name: a.name, ...a.location })),
+      ...mockVenue.gates.map((g) => ({ id: g.id, name: g.name, ...g.location })),
+      ...mockVenue.amenities.map((a) => ({ id: a.id, name: a.name, ...a.location })),
     ];
     const lats = nodes.map((n) => n.lat);
     const lngs = nodes.map((n) => n.lng);
@@ -40,7 +38,7 @@ export default function StadiumMap({ fromId, toId }: StadiumMapProps) {
       x: 30 + ((n.lng - minLng) / spanLng) * 300,
       y: 30 + (1 - (n.lat - minLat) / spanLat) * 180,
     }));
-  }, [venue]);
+  }, []);
 
   const from = points.find((p) => p.id === fromId);
   const to = points.find((p) => p.id === toId);
@@ -56,7 +54,7 @@ export default function StadiumMap({ fromId, toId }: StadiumMapProps) {
       <rect x="0" y="0" width="360" height="240" fill="rgba(5,10,22,0.6)" rx="12" />
       <ellipse cx="180" cy="120" rx="120" ry="70" fill="none" stroke="#4f8cff" strokeWidth="2" />
       <ellipse cx="180" cy="120" rx="60" ry="34" fill="rgba(34,211,166,0.12)" stroke="#22d3a6" />
-      {crowd.zones.map((zone, i) => (
+      {mockCrowd.zones.map((zone, i) => (
         <circle
           key={zone.id}
           cx={40 + i * 90}

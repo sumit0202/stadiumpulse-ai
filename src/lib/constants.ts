@@ -40,10 +40,6 @@ export const LANGUAGE_LABELS: Record<LanguageCode, string> = {
 /** Languages that render right-to-left, used by the UI for `dir`. */
 export const RTL_LANGUAGES: readonly LanguageCode[] = ['ar'] as const;
 
-/** Resolve the writing direction for a language, for the `dir` attribute on translated content. */
-export const textDirection = (language: LanguageCode): 'rtl' | 'ltr' =>
-  RTL_LANGUAGES.includes(language) ? 'rtl' : 'ltr';
-
 export const ACCESSIBILITY_NEEDS: readonly AccessibilityNeed[] = [
   'wheelchair',
   'low-noise',

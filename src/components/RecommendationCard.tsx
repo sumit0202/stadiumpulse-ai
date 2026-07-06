@@ -1,10 +1,6 @@
 import { RiskBadge } from './RiskBadge';
 import type { Recommendation } from '../types';
 
-/**
- * Renders a structured, screen-reader-friendly recommendation: summary heading,
- * risk badge, and a definition list of action, reason, time and impact notes.
- */
 export function RecommendationCard({ recommendation }: { recommendation: Recommendation }) {
   return (
     <article className="rec">
