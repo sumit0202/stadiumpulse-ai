@@ -8,14 +8,15 @@ import {
   PERSONA_LABELS,
 } from '../../lib/constants';
 import { validatePreferences } from '../../lib/validators';
-import { mockVenue } from '../../data/mockVenue';
+import { getVenue } from '../../data/dataSource';
 import { usePreferences } from '../../state/preferences';
 import type { AccessibilityNeed, LanguageCode, Persona } from '../../types';
 
+const venue = getVenue();
 const ZONE_OPTIONS = [
   'General Concourse',
-  ...mockVenue.amenities.filter((a) => a.type === 'seat-section').map((a) => a.name),
-  ...mockVenue.gates.map((g) => g.name),
+  ...venue.amenities.filter((a) => a.type === 'seat-section').map((a) => a.name),
+  ...venue.gates.map((g) => g.name),
 ];
 
 export function Onboarding() {

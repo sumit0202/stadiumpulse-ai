@@ -1,20 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { requestAssistant } from '../../lib/api';
 import { inspectPrompt } from '../../lib/promptGuard';
+import { textDirection } from '../../lib/constants';
 import { RecommendationCard } from '../../components/RecommendationCard';
 import { usePreferences } from '../../state/preferences';
-import { mockCrowd } from '../../data/mockCrowd';
-import type { AssistantResponse, Recommendation } from '../../types';
+import { getCrowd } from '../../data/dataSource';
+import type { AssistantResponse, LanguageCode, Recommendation } from '../../types';
 
 interface ChatMessage {
   id: number;
   role: 'user' | 'ai';
   text: string;
-  lang: string;
+  lang: LanguageCode;
 }
 
 function buildCrowdSummary(): string {
-  const worst = [...mockCrowd.zones].sort((a, b) => b.density - a.density)[0];
+  const worst = [...getCrowd().zones].sort((a, b) => b.density - a.density)[0];
   if (!worst) return 'No crowd signal available';
   return `${worst.name} is ${worst.level} at ${worst.density}% density`;
 }
@@ -91,7 +92,12 @@ export function Assistant() {
           <p className="muted">Ask about routes, crowds, transport, accessibility or safety.</p>
         ) : (
           messages.map((m) => (
-            <div key={m.id} className={`bubble ${m.role}`} lang={m.lang}>
+            <div
+              key={m.id}
+              className={`bubble ${m.role}`}
+              lang={m.lang}
+              dir={textDirection(m.lang)}
+            >
               <span className="live-region">
                 {m.role === 'ai' ? 'Assistant said: ' : 'You said: '}
               </span>
