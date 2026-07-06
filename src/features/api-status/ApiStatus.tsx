@@ -42,7 +42,9 @@ export function ApiStatus() {
   return (
     <section className="stack" aria-labelledby="status-title">
       <h2 id="status-title">API status</h2>
-      <p className="muted">{note}</p>
+      <p className="muted" role="status">
+        {note}
+      </p>
       <p>
         All eight Google APIs are integrated through a typed adapter layer with live and mock
         implementations. The app is fully usable in demo mode without any keys.
