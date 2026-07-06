@@ -113,11 +113,11 @@ export function Assistant() {
         </label>
         <input
           id="assistant-input"
+          className="chat-input"
           type="text"
           value={input}
           placeholder="e.g. Fastest step-free route to my seat"
           onChange={(e) => setInput(e.target.value)}
-          style={{ flex: 1 }}
         />
         <button className="btn" type="submit" disabled={loading}>
           {loading ? 'Thinking…' : 'Send'}

@@ -164,6 +164,16 @@ button {
   font-weight: 700;
 }
 
+.chat-input {
+  flex: 1;
+}
+.incident-item {
+  list-style: none;
+}
+.flush {
+  margin: 0;
+}
+
 main {
   display: block;
 }

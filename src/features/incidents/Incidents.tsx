@@ -91,7 +91,7 @@ export function Incidents() {
         <h3>Logged incidents</h3>
         <ul className="stack">
           {incidents.map((incident) => (
-            <li key={incident.id} className="rec" style={{ listStyle: 'none' }}>
+            <li key={incident.id} className="rec incident-item">
               <div className="toolbar">
                 <strong>{INCIDENT_LABELS[incident.type]}</strong>
                 <StatusChip

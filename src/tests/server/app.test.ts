@@ -42,9 +42,14 @@ describe('Express app (security & routing)', () => {
     expect(res.body.statuses.every((s: { mode: string }) => s.mode === 'ready')).toBe(true);
   });
 
-  it('sets Helmet security headers including a CSP', async () => {
+  it('sets Helmet security headers including a hardened CSP', async () => {
     const res = await request(createApp()).get('/api/health');
-    expect(res.headers['content-security-policy']).toContain("default-src 'self'");
+    const csp = res.headers['content-security-policy'];
+    expect(csp).toContain("default-src 'self'");
+    expect(csp).toContain("object-src 'none'");
+    expect(csp).toContain("base-uri 'self'");
+    expect(csp).not.toContain("'unsafe-inline'");
+    expect(csp).not.toContain("'unsafe-eval'");
     expect(res.headers['x-powered-by']).toBeUndefined();
   });
 

@@ -51,7 +51,7 @@ export function ApiStatus() {
         {statuses.map((status) => (
           <div key={status.name} className="card">
             <div className="toolbar">
-              <h3 style={{ margin: 0 }}>{status.label}</h3>
+              <h3 className="flush">{status.label}</h3>
               <StatusChip tone={status.mode} label={MODE_LABELS[status.mode] ?? status.mode} />
             </div>
             <p>{status.purpose}</p>

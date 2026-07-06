@@ -15,9 +15,14 @@ describe('security helpers', () => {
     expect(options.methods).toEqual(['GET', 'POST']);
   });
 
-  it('builds a helmet config with a CSP', () => {
+  it('builds a hardened helmet CSP with no unsafe-inline', () => {
     const options = helmetOptions();
-    expect(options.contentSecurityPolicy.directives.defaultSrc).toEqual(["'self'"]);
+    const directives = options.contentSecurityPolicy.directives;
+    expect(directives.defaultSrc).toEqual(["'self'"]);
+    expect(directives.objectSrc).toEqual(["'none'"]);
+    expect(directives.baseUri).toEqual(["'self'"]);
+    expect(directives.styleSrc).not.toContain("'unsafe-inline'");
+    expect(directives.scriptSrc).not.toContain("'unsafe-inline'");
     expect(options.crossOriginEmbedderPolicy).toBe(false);
   });
 

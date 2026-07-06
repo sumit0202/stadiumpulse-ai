@@ -14,7 +14,9 @@ export function corsOptions(origin: string): CorsOptions {
 
 /**
  * Helmet configuration with a conservative Content-Security-Policy.
- * Google Maps script/style/connect sources are allowed so live map mode works.
+ * No 'unsafe-inline' is used: the UI ships zero inline styles/scripts, so styles
+ * and scripts are restricted to same-origin. Google Maps/Fonts sources are
+ * allow-listed by explicit https origin for live map mode (never by wildcard).
  */
 export function helmetOptions() {
   return {
@@ -22,11 +24,13 @@ export function helmetOptions() {
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", 'https://maps.googleapis.com'],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        styleSrc: ["'self'", 'https://fonts.googleapis.com'],
         imgSrc: ["'self'", 'data:', 'https://maps.gstatic.com', 'https://maps.googleapis.com'],
         connectSrc: ["'self'", 'https://maps.googleapis.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
         frameAncestors: ["'self'"],
       },
     },

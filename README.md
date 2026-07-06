@@ -171,8 +171,10 @@ suite (lint, format, type-check, coverage, build, size guard, dependency audit) 
 - **No** `dangerouslySetInnerHTML` anywhere.
 - Prompt-injection guard (`promptGuard.ts`) with tests for malicious/empty/oversized/unsupported
   input.
-- Backend: **Helmet** security headers + CSP, **strict CORS**, JSON body size limit, **rate
-  limiting** on the assistant endpoint, safe generic error messages, no secret logging.
+- Backend: **Helmet** security headers + a **hardened CSP with no `unsafe-inline`/`unsafe-eval`**
+  (the UI ships zero inline styles/scripts), `object-src 'none'`, `base-uri 'self'`, **strict
+  CORS**, JSON body size limit, **rate limiting** on the assistant endpoint, safe generic error
+  messages, no secret logging.
 - **No PII** collected; only non-sensitive preferences stored in `localStorage`.
 
 ## 14. Accessibility practices

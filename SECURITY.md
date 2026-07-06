@@ -25,7 +25,9 @@ Please do **not** open a public issue containing exploit details or any secrets.
 
 ## Application hardening
 
-- **HTTP headers:** Helmet with a strict Content-Security-Policy (and HSTS in
+- **HTTP headers:** Helmet with a strict Content-Security-Policy — **no
+  `unsafe-inline` or `unsafe-eval`** (the UI ships zero inline styles/scripts),
+  `object-src 'none'`, `base-uri 'self'`, `form-action 'self'` (and HSTS in
   production).
 - **CORS:** strict allow-list driven by `CORS_ORIGIN`.
 - **Rate limiting:** the assistant endpoint is rate limited (`express-rate-limit`).
