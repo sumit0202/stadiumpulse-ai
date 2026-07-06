@@ -41,6 +41,29 @@ StadiumPulse AI is a fast, accessible web app with:
 - A clean **adapter layer** representing **all 8 required Google APIs**, each with a live
   implementation and a typed mock fallback so the whole product works in **demo mode without keys**.
 
+### How this maps to Challenge 4 (Smart Stadiums & Tournament Operations)
+
+The challenge asks for a **GenAI-enabled solution that enhances stadium operations and the overall
+tournament experience for fans, organizers, volunteers, or venue staff, leveraging Generative AI**
+across the capabilities below during the **FIFA World Cup 2026**. Every named capability is a
+first-class module in this project:
+
+| Challenge requirement          | Where it lives                              | How GenAI is leveraged                                                            |
+| ------------------------------ | ------------------------------------------- | --------------------------------------------------------------------------------- |
+| **Navigation**                 | `features/navigation` (route planner + map) | Gemini explains/answers routing questions per persona and language                |
+| **Crowd management**           | `features/crowd`                            | Gemini summarises density, forecasts and buffer/redirect actions                  |
+| **Accessibility**              | `features/accessibility`                    | Gemini phrases step-free guidance; replies honour selected accessibility needs    |
+| **Transportation**             | `features/transport`                        | Gemini compares options and low-carbon/exit guidance in plain language            |
+| **Sustainability**             | `features/sustainability`                   | Gemini turns the sustainability score + air quality into actionable advice        |
+| **Multilingual assistance**    | Copilot + Cloud Translation                 | Gemini reasons in, and Cloud Translation renders, 7 languages (RTL-aware)         |
+| **Operational intelligence**   | `features/dashboard` (KPIs, decision cards) | Gemini summarises deterministic decision cards for organizers/staff               |
+| **Real-time decision support** | AI Copilot (`features/assistant`)           | Gemini answers persona- and context-aware questions, grounded in provided signals |
+
+**Personas addressed:** Fan, Organizer, Volunteer, Venue Staff (see section 5).
+**GenAI is central:** a deterministic engine guarantees safe, explainable output, and **Gemini** adds
+natural-language summarisation, multilingual reasoning and conversational decision support on top —
+so the assistant is smart and dynamic, yet never unsafe when the model is unavailable.
+
 ## 5. Personas supported
 
 | Persona     | Focus                                                                 |
