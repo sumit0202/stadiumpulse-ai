@@ -4,19 +4,18 @@ import { getVenueSustainability } from '../../lib/venueInsights';
 import { KpiCard } from '../../components/KpiCard';
 import { RecommendationCard } from '../../components/RecommendationCard';
 import { StatusChip } from '../../components/StatusChip';
-import { mockVenue } from '../../data/mockVenue';
-import { mockCrowd } from '../../data/mockCrowd';
-import { mockTransport } from '../../data/mockTransport';
-import { mockIncidents } from '../../data/mockIncidents';
+import { getCrowd, getIncidents, getTransport, getVenue } from '../../data/dataSource';
 
 export function Dashboard() {
+  const venue = getVenue();
+  const crowd = getCrowd();
   const { kpis, cards } = useMemo(() => {
     const { score } = getVenueSustainability();
     return {
-      kpis: computeKpis(mockVenue, mockCrowd, mockIncidents, mockTransport, score),
-      cards: generateDecisionCards(mockVenue, mockCrowd, mockTransport),
+      kpis: computeKpis(venue, crowd, getIncidents(), getTransport(), score),
+      cards: generateDecisionCards(venue, crowd, getTransport()),
     };
-  }, []);
+  }, [venue, crowd]);
 
   return (
     <section className="stack" aria-labelledby="dashboard-title">
@@ -50,7 +49,7 @@ export function Dashboard() {
         <h3>Crowd heat zones</h3>
         <p className="muted">Levels are labelled in text, not colour alone.</p>
         <div className="heat-grid">
-          {mockCrowd.zones.map((zone) => (
+          {crowd.zones.map((zone) => (
             <div key={zone.id} className="heat-cell" data-level={zone.level}>
               {zone.name}
               <br />

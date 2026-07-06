@@ -3,14 +3,13 @@ import { nextStepForIncident, severityForIncident } from '../../lib/decisionEngi
 import { validateIncidentDescription } from '../../lib/validators';
 import { INCIDENT_LABELS, INCIDENT_TYPES, RISK_LABELS } from '../../lib/constants';
 import { StatusChip } from '../../components/StatusChip';
-import { mockIncidents } from '../../data/mockIncidents';
-import { mockCrowd } from '../../data/mockCrowd';
+import { getCrowd, getIncidents } from '../../data/dataSource';
 import type { Incident, IncidentType } from '../../types';
 
-const ZONES = mockCrowd.zones.map((z) => ({ id: z.id, name: z.name }));
+const ZONES = getCrowd().zones.map((z) => ({ id: z.id, name: z.name }));
 
 export function Incidents() {
-  const [incidents, setIncidents] = useState<Incident[]>(mockIncidents);
+  const [incidents, setIncidents] = useState<Incident[]>(getIncidents());
   const [type, setType] = useState<IncidentType>('medical');
   const [zoneId, setZoneId] = useState(ZONES[0]?.id ?? '');
   const [description, setDescription] = useState('');

@@ -100,8 +100,8 @@ src/
   features/       assistant, dashboard, navigation, crowd, accessibility, transport,
                   sustainability, incidents, api-status, onboarding
   lib/            googleApiAdapters, decisionEngine, promptGuard, validators, cache,
-                  sustainability, constants, api (backend client)
-  data/           mockVenue, mockCrowd, mockTransport, mockIncidents  (typed, fictional)
+                  sustainability, venueInsights (selectors), constants, api (backend client)
+  data/           dataSource (demo/live access seam) + mockVenue/Crowd/Transport/Incidents (typed, fictional)
   state/          PreferencesProvider (localStorage, a11y settings)
   types/          Shared domain types
   tests/          Real unit / component / a11y / backend tests
@@ -159,7 +159,7 @@ scoring, crowd recommendations, accessibility components, backend assistant endp
 API status, form validation, error states, keyboard interaction, and malicious/empty/oversized/
 unsupported-language inputs, plus positive/negative/null/undefined and boundary cases, backend
 security integration (rate limit 429, Helmet CSP, strict CORS, oversized-body rejection) and
-keyboard/skip-link/toggle accessibility tests. **190 tests; 100% coverage** on the enforced layers
+keyboard/skip-link/toggle accessibility tests. **194 tests; 100% coverage** on the enforced layers
 (`src/lib`, `src/data`, `server/{geminiProxy,security,validators}`). Every push and PR runs the full
 suite (lint, format, type-check, coverage, build, size guard, dependency audit) in GitHub Actions CI.
 
@@ -218,7 +218,7 @@ suite (lint, format, type-check, coverage, build, size guard, dependency audit) 
   sanitisation everywhere, prompt-injection guard, no PII, no `dangerouslySetInnerHTML`.
 - **Efficiency** — lazy loading, debounce/AbortController, TTL cache, memoized pure logic, tiny
   bundle, repo-size guard.
-- **Testing** — 190 real tests, **100%** branches/functions/lines/statements on core layers,
+- **Testing** — 194 real tests, **100%** branches/functions/lines/statements on core layers,
   including positive/negative/null/undefined/boundary cases, backend security integration
   (Supertest) and accessibility (axe); enforced in CI on every push/PR.
 - **Accessibility** — semantic landmarks, WAI-ARIA tabs (roving tabindex + arrow keys), ARIA,
