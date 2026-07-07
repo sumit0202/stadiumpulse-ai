@@ -314,31 +314,6 @@ const MODE_SPEED_FACTOR: Record<RouteMode, number> = {
   'staff-only': 0.85,
 };
 
-/** Mid-route wayfinding instruction shown for each routing mode. */
-const ROUTE_STEP_INSTRUCTION: Record<RouteMode, string> = {
-  fastest: 'Follow the main concourse signage.',
-  'low-crowd': 'Follow the quieter perimeter concourse.',
-  accessible: 'Use step-free ramps and lifts where marked.',
-  family: 'Follow the main concourse signage.',
-  'staff-only': 'Use the operational service corridor (staff credentials required).',
-};
-
-/**
- * Score how suitable a route is for step-free / accessible travel (0-100).
- * Higher is better; the accessible mode rewards fully step-free paths and every
- * mode is penalised as the average crowd along the route rises.
- */
-function computeAccessibilityScore(
-  mode: RouteMode,
-  bothStepFree: boolean,
-  avgCrowd: number,
-): number {
-  let score = bothStepFree ? 80 : 40;
-  if (mode === 'accessible') score = bothStepFree ? 100 : 55;
-  if (mode === 'family') score = Math.min(100, score + 5);
-  return clamp(score - Math.round(avgCrowd / 10), 0, 100);
-}
-
 /**
  * Deterministic route planner used as the mock/fallback for the Routes API.
  * Base walking speed is ~80 m/min, adjusted by route mode.
@@ -360,9 +335,22 @@ export function planRoute(
   const crowdRisk = crowdLevelToRisk(classifyCrowd(avgCrowd));
 
   const bothStepFree = from.stepFree && to.stepFree;
-  const accessibilityScore = computeAccessibilityScore(mode, bothStepFree, avgCrowd);
+  let accessibilityScore = bothStepFree ? 80 : 40;
+  if (mode === 'accessible') accessibilityScore = bothStepFree ? 100 : 55;
+  if (mode === 'family') accessibilityScore = Math.min(100, accessibilityScore + 5);
+  accessibilityScore = clamp(accessibilityScore - Math.round(avgCrowd / 10), 0, 100);
 
-  const steps = [`Start at ${from.name}.`, ROUTE_STEP_INSTRUCTION[mode], `Arrive at ${to.name}.`];
+  const steps = [
+    `Start at ${from.name}.`,
+    mode === 'low-crowd'
+      ? 'Follow the quieter perimeter concourse.'
+      : mode === 'accessible'
+        ? 'Use step-free ramps and lifts where marked.'
+        : mode === 'staff-only'
+          ? 'Use the operational service corridor (staff credentials required).'
+          : 'Follow the main concourse signage.',
+    `Arrive at ${to.name}.`,
+  ];
 
   return {
     mode,

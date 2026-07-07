@@ -159,7 +159,7 @@ scoring, crowd recommendations, accessibility components, backend assistant endp
 API status, form validation, error states, keyboard interaction, and malicious/empty/oversized/
 unsupported-language inputs, plus positive/negative/null/undefined and boundary cases, backend
 security integration (rate limit 429, Helmet CSP, strict CORS, oversized-body rejection) and
-keyboard/skip-link/toggle accessibility tests. **193 tests; 100% coverage** on the enforced layers
+keyboard/skip-link/toggle accessibility tests. **190 tests; 100% coverage** on the enforced layers
 (`src/lib`, `src/data`, `server/{geminiProxy,security,validators}`). Every push and PR runs the full
 suite (lint, format, type-check, coverage, build, size guard, dependency audit) in GitHub Actions CI.
 
@@ -176,9 +176,6 @@ suite (lint, format, type-check, coverage, build, size guard, dependency audit) 
   CORS**, JSON body size limit, **rate limiting** on the assistant endpoint, safe generic error
   messages, no secret logging.
 - **No PII** collected; only non-sensitive preferences stored in `localStorage`.
-- **Zero known vulnerabilities** across the _entire_ dependency tree (`npm audit` is clean for both
-  runtime and dev dependencies; CI also runs a production-only audit) and GitHub Actions run with
-  least-privilege `contents: read` permissions.
 
 ## 14. Accessibility practices
 
@@ -188,8 +185,7 @@ suite (lint, format, type-check, coverage, build, size guard, dependency audit) 
   tabindex** and Arrow/Home/End key navigation.
 - ARIA labels, `role="alert"`/`role="status"`/`role="log"` live regions for alerts and results.
 - Multilingual assistant replies carry a `lang` attribute so screen readers pronounce them
-  correctly, and the **document `lang`/`dir` update with the selected language** (right-to-left
-  layout for Arabic) so assistive technology and rendering follow the chosen locale.
+  correctly.
 - Full keyboard operability and visible focus states (`:focus-visible`).
 - **High-contrast**, **large-text** and **reduced-motion** toggles (persisted), plus
   `prefers-reduced-motion` support.
